@@ -1,0 +1,8 @@
+for capture new faces with roll no.
+
+python capture_faces.py
+
+
+for running server 
+
+python manage.py runserverq

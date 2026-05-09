@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Attendance History{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-clock-history"></i> Attendance History</h2>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Filter by Class</label>
+                <select class="form-select" name="class_id" onchange="this.form.submit()">
+                    <option value="">All Classes</option>
+                    {% for class_obj in assigned_classes %}
+                        <option value="{{ class_obj.id }}" {% if selected_class_id == class_obj.id %}selected{% endif %}>
+                            {{ class_obj.class_name }} ({{ class_obj.class_code }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Filter by Date</label>
+                <input type="date" class="form-control" name="date" value="{{ date_filter }}" onchange="this.form.submit()">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">&nbsp;</label>
+                <a href="{% url 'attendance:history' %}" class="btn btn-secondary w-100">Clear Filters</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if grouped_attendance %}
+            {% for group in grouped_attendance %}
+                <div class="card mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">{{ group.class_obj.class_name }} ({{ group.class_obj.class_code }})</h5>
+                            <small class="text-muted">Date: {{ group.date }}</small>
+                        </div>
+                        <div>
+                            <span class="badge bg-success">Present: {{ group.present_count }}</span>
+                            <span class="badge bg-danger">Absent: {{ group.absent_count }}</span>
+                            <a href="{% url 'attendance:view' group.class_obj.id group.date|date:'Y-m-d' %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> View
+                            </a>
+                            <a href="{% url 'attendance:update' group.class_obj.id group.date|date:'Y-m-d' %}" class="btn btn-sm btn-outline-warning">
+                                <i class="bi bi-pencil"></i> Update
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Name</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for record in group.records %}
+                                        <tr>
+                                            <td>{{ record.student.student_id }}</td>
+                                            <td>{{ record.student.get_full_name }}</td>
+                                            <td>
+                                                {% if record.status == 'present' %}
+                                                    <span class="badge bg-success">Present</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger">Absent</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted text-center">No attendance records found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

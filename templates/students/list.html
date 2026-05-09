@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Students{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-people-fill"></i> Students</h2>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Filter by Class</label>
+                <select class="form-select" name="class_id" onchange="this.form.submit()">
+                    <option value="">All Classes</option>
+                    {% for class_obj in classes %}
+                        <option value="{{ class_obj.id }}" {% if selected_class and selected_class.id == class_obj.id %}selected{% endif %}>
+                            {{ class_obj.class_name }} ({{ class_obj.class_code }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Class</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                    <tr>
+                        <td>{{ student.student_id }}</td>
+                        <td>{{ student.get_full_name }}</td>
+                        <td>{{ student.email|default:"N/A" }}</td>
+                        <td>{{ student.phone|default:"N/A" }}</td>
+                        <td>{{ student.enrolled_class.class_name }}</td>
+                        <td>
+                            <a href="{% url 'students:detail' student.id %}" class="btn btn-sm btn-outline-info">
+                                <i class="bi bi-eye"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">No students found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+

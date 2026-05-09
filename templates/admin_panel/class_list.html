@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Classes{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-journal-text"></i> Classes</h2>
+    <a href="{% url 'admin_panel:class_add' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Add Class
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Class Code</th>
+                    <th>Class Name</th>
+                    <th>Subject</th>
+                    <th>Teachers</th>
+                    <th>Room</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for class_obj in classes %}
+                    <tr>
+                        <td>{{ class_obj.class_code }}</td>
+                        <td>{{ class_obj.class_name }}</td>
+                        <td>{{ class_obj.subject.subject_name }}</td>
+                        <td>
+                            {% for teacher in class_obj.teachers.all %}
+                                <span class="badge bg-info">{{ teacher.teacher_id }}</span>
+                            {% empty %}
+                                <span class="text-muted">No teachers</span>
+                            {% endfor %}
+                        </td>
+                        <td>{{ class_obj.room|default:"N/A" }}</td>
+                        <td>
+                            <a href="{% url 'admin_panel:class_edit' class_obj.id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                            <a href="{% url 'admin_panel:class_delete' class_obj.id %}" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">No classes found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+

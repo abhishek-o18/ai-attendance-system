@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Attendance{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-pencil-square"></i> Update Attendance</h2>
+        <p class="text-muted">Class: {{ class_obj.class_name }} | Date: {{ date }}</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Current Status</th>
+                            <th>New Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in students_with_attendance %}
+                            <tr>
+                                <td>{{ item.student.student_id }}</td>
+                                <td>{{ item.student.get_full_name }}</td>
+                                <td>
+                                    {% if item.attendance_record %}
+                                        {% if item.attendance_record.status == 'present' %}
+                                            <span class="badge bg-success">Present</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Absent</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="badge bg-secondary">Not Marked</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="student_{{ item.student.id }}" id="present_{{ item.student.id }}" value="present" {% if not item.attendance_record or item.attendance_record.status == 'present' %}checked{% endif %}>
+                                        <label class="form-check-label" for="present_{{ item.student.id }}">Present</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="student_{{ item.student.id }}" id="absent_{{ item.student.id }}" value="absent" {% if item.attendance_record and item.attendance_record.status == 'absent' %}checked{% endif %}>
+                                        <label class="form-check-label" for="absent_{{ item.student.id }}">Absent</label>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">No students found in this class.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                <a href="{% url 'attendance:history' %}" class="btn btn-secondary">Cancel</a>
+                <button type="button" class="btn btn-outline-primary" onclick="markAll('present')">Mark All Present</button>
+                <button type="button" class="btn btn-outline-secondary" onclick="markAll('absent')">Mark All Absent</button>
+                <button type="submit" class="btn btn-primary">Update Attendance</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function markAll(status) {
+        const radios = document.querySelectorAll('input[type="radio"][value="' + status + '"]');
+        radios.forEach(radio => radio.checked = true);
+    }
+</script>
+{% endblock %}
+

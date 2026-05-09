@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Teacher Profile{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-person-badge"></i> Teacher Profile</h2>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Personal Information</h5>
+                <p><strong>Teacher ID:</strong> {{ teacher.teacher_id }}</p>
+                <p><strong>Name:</strong> {{ teacher.user.get_full_name|default:teacher.user.username }}</p>
+                <p><strong>Email:</strong> {{ teacher.user.email|default:"N/A" }}</p>
+                <p><strong>Phone:</strong> {{ teacher.user.phone|default:"N/A" }}</p>
+                <p><strong>Department:</strong> {{ teacher.department|default:"N/A" }}</p>
+                <p><strong>Qualification:</strong> {{ teacher.qualification|default:"N/A" }}</p>
+            </div>
+            <div class="col-md-6">
+                <h5>Assigned Classes</h5>
+                {% if teacher.classes.all %}
+                    <ul class="list-group">
+                        {% for class_obj in teacher.classes.all %}
+                            <li class="list-group-item">
+                                {{ class_obj.class_name }} ({{ class_obj.class_code }})
+                                <br>
+                                <small class="text-muted">{{ class_obj.subject.subject_name }}</small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">No classes assigned yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

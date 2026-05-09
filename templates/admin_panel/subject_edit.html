@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Subject{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0"><i class="bi bi-pencil"></i> Edit Subject</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Subject Code</label>
+                        <input type="text" class="form-control" value="{{ subject.subject_code }}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Subject Name *</label>
+                        <input type="text" class="form-control" name="subject_name" value="{{ subject.subject_name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="3">{{ subject.description }}</textarea>
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'admin_panel:subject_list' %}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-success">Update Subject</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

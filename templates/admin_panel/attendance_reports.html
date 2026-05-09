@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Attendance Reports{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-graph-up"></i> Attendance Reports</h2>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Report Type</label>
+                <select class="form-select" name="type" id="reportType">
+                    <option value="daily" {% if report_type == 'daily' %}selected{% endif %}>Daily</option>
+                    <option value="monthly" {% if report_type == 'monthly' %}selected{% endif %}>Monthly</option>
+                    <option value="subject" {% if report_type == 'subject' %}selected{% endif %}>Subject-wise</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Class</label>
+                <select class="form-select" name="class_id">
+                    <option value="">All Classes</option>
+                    {% for class_obj in classes %}
+                        <option value="{{ class_obj.id }}" {% if selected_class and selected_class.id == class_obj.id %}selected{% endif %}>
+                            {{ class_obj.class_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3" id="dateField" style="display: {% if report_type == 'daily' %}block{% else %}none{% endif %};">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-control" name="date" value="{{ date }}">
+            </div>
+            <div class="col-md-3" id="monthField" style="display: {% if report_type == 'monthly' %}block{% else %}none{% endif %};">
+                <label class="form-label">Month</label>
+                <input type="month" class="form-control" name="month" value="{{ month }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">&nbsp;</label>
+                <button type="submit" class="btn btn-primary w-100">Generate Report</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5>Attendance Records</h5>
+    </div>
+    <div class="card-body">
+        {% if attendance_records %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Student</th>
+                            <th>Class</th>
+                            <th>Status</th>
+                            <th>Marked By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in attendance_records %}
+                            <tr>
+                                <td>{{ record.date }}</td>
+                                <td>{{ record.student.get_full_name }} ({{ record.student.student_id }})</td>
+                                <td>{{ record.class_obj.class_name }}</td>
+                                <td>
+                                    {% if record.status == 'present' %}
+                                        <span class="badge bg-success">Present</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Absent</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ record.marked_by.get_full_name|default:record.marked_by.username }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted text-center">No attendance records found.</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.getElementById('reportType').addEventListener('change', function() {
+        const reportType = this.value;
+        const dateField = document.getElementById('dateField');
+        const monthField = document.getElementById('monthField');
+        
+        if (reportType === 'daily') {
+            dateField.style.display = 'block';
+            monthField.style.display = 'none';
+        } else if (reportType === 'monthly') {
+            dateField.style.display = 'none';
+            monthField.style.display = 'block';
+        } else {
+            dateField.style.display = 'none';
+            monthField.style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}
+
