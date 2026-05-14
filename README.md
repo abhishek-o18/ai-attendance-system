@@ -58,14 +58,6 @@ A complete AI-powered Attendance Management System built with Django that enable
 
 ---
 
-# Biometric Attendance Support
-- Biometric machine integration endpoint
-- API-based attendance receiving system
-- Biometric attendance storage in database
-- Support for machine-generated attendance records
-
----
-
 # Attendance Logic
 - One attendance entry per student per class per day
 - Prevents duplicate attendance entries
@@ -281,7 +273,6 @@ The image filename must match the student's `student_id` in the database.
 |----------------|--------|
 | Manual Attendance | ✅ |
 | Face Recognition Attendance | ✅ |
-| Biometric Attendance | ✅ |
 
 ---
 
